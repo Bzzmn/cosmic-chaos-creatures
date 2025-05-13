@@ -76,13 +76,8 @@ const Landing: React.FC = () => {
   };
   
   const handleStartAdventure = () => {
-    if (isAuthenticated) {
-      // If user is authenticated, go directly to personality test
-      navigate('/personality');
-    } else {
-      // If not authenticated, go to auth page
-      navigate('/auth');
-    }
+    // Always navigate directly to personality test
+    navigate('/personality');
   };
   
   return (

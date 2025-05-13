@@ -8,6 +8,7 @@ interface User {
   name: string;
   email: string;
   provider?: string;
+  imageUrl?: string;
 }
 
 interface AuthContextType {
@@ -58,7 +59,9 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       id: Math.random().toString(36).substring(2, 9),
       name: email.split('@')[0],
       email,
-      provider
+      provider,
+      // Add a placeholder image URL for demonstration purposes
+      imageUrl: provider ? `/placeholder.svg` : undefined
     };
     
     // Store user in local storage and state

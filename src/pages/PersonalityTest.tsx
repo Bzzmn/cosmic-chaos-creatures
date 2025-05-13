@@ -1,6 +1,5 @@
-
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import StarryBackground from '@/components/StarryBackground';
 import CosmicParticles from '@/components/CosmicParticles';
@@ -9,6 +8,7 @@ import NeonTitle from '@/components/NeonTitle';
 import GalaxyCard from '@/components/GalaxyCard';
 import TypewriterText from '@/components/TypewriterText';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { useAuth } from '@/hooks/useAuth';
 
 interface Question {
   question: string;
@@ -23,6 +23,8 @@ interface Question {
 
 const PersonalityTest: React.FC = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [answers, setAnswers] = useState<number[]>([]);
   const [showFeedback, setShowFeedback] = useState<string | null>(null);
@@ -184,10 +186,22 @@ const PersonalityTest: React.FC = () => {
       if (currentQuestion < questions.length - 1) {
         setCurrentQuestion(currentQuestion + 1);
       } else {
-        // Calculate character stats and navigate to character page
-        navigate('/character-creation', { 
-          state: { answers, questions } 
-        });
+        // Test completed, check authentication status
+        if (isAuthenticated) {
+          // If user is authenticated, proceed to character creation
+          navigate('/character-creation', { 
+            state: { answers, questions } 
+          });
+        } else {
+          // If not authenticated, redirect to auth page with test results
+          navigate('/auth', { 
+            state: { 
+              answers, 
+              questions, 
+              fromTest: true 
+            } 
+          });
+        }
       }
     }, 3000);
   };

@@ -7,6 +7,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./hooks/useAuth";
 import ProtectedRoute from "./components/ProtectedRoute";
+import Header from "./components/Header";
 import Landing from "./pages/Landing";
 import AuthPage from "./pages/AuthPage";
 import PersonalityTest from "./pages/PersonalityTest";
@@ -27,32 +28,31 @@ const App: React.FC = () => {
           <Toaster />
           <Sonner />
           <BrowserRouter>
-            <Routes>
-              <Route path="/" element={<Landing />} />
-              <Route path="/auth" element={<AuthPage />} />
-              <Route path="/personality" element={
-                <ProtectedRoute>
-                  <PersonalityTest />
-                </ProtectedRoute>
-              } />
-              <Route path="/character-creation" element={
-                <ProtectedRoute>
-                  <CharacterCreation />
-                </ProtectedRoute>
-              } />
-              <Route path="/character/:address" element={
-                <ProtectedRoute>
-                  <CharacterDetail />
-                </ProtectedRoute>
-              } />
-              <Route path="/adventure" element={
-                <ProtectedRoute>
-                  <Adventure />
-                </ProtectedRoute>
-              } />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
+            <Header />
+            <div className="pt-16"> {/* Add padding to account for fixed header */}
+              <Routes>
+                <Route path="/" element={<Landing />} />
+                <Route path="/auth" element={<AuthPage />} />
+                <Route path="/personality" element={<PersonalityTest />} /> {/* No longer protected */}
+                <Route path="/character-creation" element={
+                  <ProtectedRoute>
+                    <CharacterCreation />
+                  </ProtectedRoute>
+                } />
+                <Route path="/character/:address" element={
+                  <ProtectedRoute>
+                    <CharacterDetail />
+                  </ProtectedRoute>
+                } />
+                <Route path="/adventure" element={
+                  <ProtectedRoute>
+                    <Adventure />
+                  </ProtectedRoute>
+                } />
+                {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                <Route path="*" element={<NotFound />} />
+              </Routes>
+            </div>
           </BrowserRouter>
         </TooltipProvider>
       </AuthProvider>

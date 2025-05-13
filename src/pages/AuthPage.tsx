@@ -1,6 +1,6 @@
 
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -30,10 +30,30 @@ const registerSchema = z.object({
   password: z.string().min(6, "La contraseña debe tener al menos 6 caracteres"),
 });
 
+interface LocationState {
+  from?: Location;
+  answers?: number[];
+  questions?: any[];
+  fromTest?: boolean;
+}
+
 const AuthPage: React.FC = () => {
   const [activeTab, setActiveTab] = useState<"login" | "register">("login");
   const navigate = useNavigate();
+  const location = useLocation();
   const { login, register: registerUser } = useAuth();
+  
+  const state = location.state as LocationState;
+  const fromTest = state?.fromTest;
+  const testAnswers = state?.answers;
+  const testQuestions = state?.questions;
+  
+  // Set active tab to register if coming from test
+  useEffect(() => {
+    if (fromTest) {
+      setActiveTab("register");
+    }
+  }, [fromTest]);
 
   // Login form
   const loginForm = useForm<z.infer<typeof loginSchema>>({
@@ -59,7 +79,17 @@ const AuthPage: React.FC = () => {
     login(values.email, values.password)
       .then(() => {
         toast.success("¡Inicio de sesión exitoso!");
-        navigate("/personality");
+        if (fromTest && testAnswers && testQuestions) {
+          // If coming from test, proceed to character creation with test results
+          navigate("/character-creation", { 
+            state: { 
+              answers: testAnswers, 
+              questions: testQuestions 
+            } 
+          });
+        } else {
+          navigate("/personality");
+        }
       })
       .catch((error) => {
         toast.error("Error al iniciar sesión", {
@@ -73,7 +103,17 @@ const AuthPage: React.FC = () => {
     registerUser(values.name, values.email, values.password)
       .then(() => {
         toast.success("¡Registro exitoso!");
-        navigate("/personality");
+        if (fromTest && testAnswers && testQuestions) {
+          // If coming from test, proceed to character creation with test results
+          navigate("/character-creation", { 
+            state: { 
+              answers: testAnswers, 
+              questions: testQuestions 
+            } 
+          });
+        } else {
+          navigate("/personality");
+        }
       })
       .catch((error) => {
         toast.error("Error al registrarse", {
@@ -90,7 +130,17 @@ const AuthPage: React.FC = () => {
       login("user@example.com", "password123", provider)
         .then(() => {
           toast.success(`¡Inicio de sesión con ${provider} exitoso!`);
-          navigate("/personality");
+          if (fromTest && testAnswers && testQuestions) {
+            // If coming from test, proceed to character creation with test results
+            navigate("/character-creation", { 
+              state: { 
+                answers: testAnswers, 
+                questions: testQuestions 
+              } 
+            });
+          } else {
+            navigate("/personality");
+          }
         })
         .catch(() => {
           toast.error(`Error al iniciar sesión con ${provider}`);
@@ -110,12 +160,16 @@ const AuthPage: React.FC = () => {
               El Restaurante del Fin del Universo
             </NeonTitle>
           </Link>
-          <p className="text-cosmic-cyan font-space">¡Prepárate para tu aventura cósmica!</p>
+          {fromTest ? (
+            <p className="text-cosmic-green font-space">¡Genial! Regístrate para guardar tu personaje</p>
+          ) : (
+            <p className="text-cosmic-cyan font-space">¡Prepárate para tu aventura cósmica!</p>
+          )}
         </div>
         
         <GalaxyCard className="w-full" hasGlow glowColor="cyan">
           <Tabs
-            defaultValue="login"
+            defaultValue={activeTab}
             value={activeTab}
             onValueChange={(v) => setActiveTab(v as "login" | "register")}
             className="w-full"
