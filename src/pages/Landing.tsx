@@ -10,7 +10,7 @@ import TypewriterText from '@/components/TypewriterText';
 import CharacterCard from '@/components/CharacterCard';
 import CharactersProgressCard from '@/components/CharactersProgressCard';
 import LatestCharacterSlider from '@/components/LatestCharacterSlider';
-import { Sparkles, Coffee, BookOpen, Dices, Award } from 'lucide-react';
+import { Sparkles, Coffee, BookOpen, Dices, Award, Rocket } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
 import { useAuth } from '@/hooks/useAuth';
