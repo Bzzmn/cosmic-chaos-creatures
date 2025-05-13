@@ -9,6 +9,7 @@ import GalaxyCard from '@/components/GalaxyCard';
 import TypewriterText from '@/components/TypewriterText';
 import CharacterCard from '@/components/CharacterCard';
 import CharactersProgressCard from '@/components/CharactersProgressCard';
+import LatestCharacterSlider from '@/components/LatestCharacterSlider';
 import { Rocket, Sparkles, Coffee, BookOpen, Dices, Award } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -138,9 +139,14 @@ const Landing: React.FC = () => {
           </div>
         </div>
         
-        {/* Character Progress Card - NEW SECTION */}
+        {/* Character Progress Card */}
         <div className="mt-8 animate-fade-in">
           <CharactersProgressCard />
+        </div>
+        
+        {/* Latest Characters Slider - NEW SECTION */}
+        <div className="mt-8 animate-fade-in">
+          <LatestCharacterSlider />
         </div>
         
         {/* Testimonials Section */}
