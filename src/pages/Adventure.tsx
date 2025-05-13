@@ -8,7 +8,7 @@ import NeonTitle from '@/components/NeonTitle';
 import GalaxyCard from '@/components/GalaxyCard';
 import TypewriterText from '@/components/TypewriterText';
 import CharacterCard, { CharacterType, Artifact } from '@/components/CharacterCard';
-import { ArrowLeft, ArrowRight, Star, Magic } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Star, Sparkles } from 'lucide-react';
 
 interface StoryStep {
   narrative: string;
@@ -112,7 +112,7 @@ const Adventure: React.FC = () => {
           text: "Quedarte en tu asiento y pedir otra bebida",
           outcome: `Pides otra Gargleblaster Pangaláctico. El camarero robot te trae uno y dice: "La última bebida antes del fin... temporal del viaje". Mientras bebes, la nave da un giro inesperado y terminas flotando por el pasillo central para diversión de los otros pasajeros.`,
           nextStep: 2,
-          icon: <Magic className="h-5 w-5" />
+          icon: <Sparkles className="h-5 w-5" />
         }
       ]
     },
@@ -129,7 +129,7 @@ const Adventure: React.FC = () => {
           text: "Conectar el cable rosa y cruzar los dedos",
           outcome: `Al conectar el cable rosa, la gravedad de la nave se invierte momentáneamente. Todo y todos caen hacia el techo. El pingüino-capitán desliza hacia ti una insignia: "Felicidades, ahora eres el nuevo oficial de orientación gravitacional. No teníamos uno hasta ahora."`,
           nextStep: 3,
-          icon: <Magic className="h-5 w-5" />,
+          icon: <Sparkles className="h-5 w-5" />,
           artifact: possibleArtifacts[1]
         }
       ]
@@ -141,7 +141,7 @@ const Adventure: React.FC = () => {
           text: "Ignorar el anuncio y seguir escuchando a las plantas",
           outcome: `Las plantas te revelan el secreto de la fotosíntesis emocional y te regalan una pequeña semilla que, según ellas, crecerá en cualquier ambiente y te protegerá de pensamientos tristes. La guardas en tu bolsillo justo cuando la nave se estabiliza.`,
           nextStep: 3,
-          icon: <Magic className="h-5 w-5" />,
+          icon: <Sparkles className="h-5 w-5" />,
           artifact: possibleArtifacts[2]
         },
         {
@@ -159,7 +159,7 @@ const Adventure: React.FC = () => {
           text: "Ver el menú detalladamente",
           outcome: `El menú está escrito en 17 idiomas simultáneamente y cambia cada vez que parpadeas. Finalmente pides "algo que no trate de comerme primero". Te sirven un plato que canta ópera cada vez que lo pinchas. Es delicioso y te hace sentir temporalmente omnisciente.`,
           nextStep: 4,
-          icon: <Magic className="h-5 w-5" />,
+          icon: <Sparkles className="h-5 w-5" />,
           artifact: possibleArtifacts[3]
         },
         {
@@ -177,7 +177,7 @@ const Adventure: React.FC = () => {
           text: "Aceptar el NFT cósmico",
           outcome: `El androide sonríe y toma una captura de tu esencia. "Su identidad ha sido inmortalizada en la blockchain universal. Incluso después de este ciclo del universo, ${character?.name} el ${character?.class} permanecerá en el registro cósmico." Te entrega una tarjeta holográfica con un código QR multidimensional.`,
           nextStep: -1, // End of story
-          icon: <Magic className="h-5 w-5" />
+          icon: <Sparkles className="h-5 w-5" />
         },
         {
           text: "Declinar amablemente, prefiriendo mantener tu misterio",
@@ -210,7 +210,7 @@ const Adventure: React.FC = () => {
         // Show toast
         toast.success(`¡Nuevo artefacto adquirido!`, {
           description: option.artifact.name,
-          icon: <Star className="h-5 w-5" />,
+          icon: <Sparkles className="h-5 w-5" />,
         });
       }
     }
@@ -248,7 +248,7 @@ const Adventure: React.FC = () => {
       if (updatedArtifact.isActive) {
         toast.success(`¡Artefacto activado!`, {
           description: `${artifact.name} - ${artifact.effect.stat} +${artifact.effect.bonus} puntos por ${artifact.effect.duration} aventuras`,
-          icon: <Magic className="h-5 w-5" />,
+          icon: <Sparkles className="h-5 w-5" />,
         });
       } else {
         toast.info(`Artefacto desactivado`, {

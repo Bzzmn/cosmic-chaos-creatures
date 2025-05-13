@@ -14,7 +14,8 @@ const mockCharacters: (CharacterType & { address: string })[] = [
       sarcasmLevel: 92,
       timeWarping: 60,
       cosmicLuck: 78
-    }
+    },
+    artifacts: [null, null, null, null] // Add empty artifact slots
   },
   {
     name: "Blipzoid",
@@ -27,7 +28,8 @@ const mockCharacters: (CharacterType & { address: string })[] = [
       sarcasmLevel: 72,
       timeWarping: 83,
       cosmicLuck: 60
-    }
+    },
+    artifacts: [null, null, null, null] // Add empty artifact slots
   },
   {
     name: "Quirkton",
@@ -40,7 +42,8 @@ const mockCharacters: (CharacterType & { address: string })[] = [
       sarcasmLevel: 68,
       timeWarping: 90,
       cosmicLuck: 84
-    }
+    },
+    artifacts: [null, null, null, null] // Add empty artifact slots
   }
 ];
 
@@ -77,4 +80,4 @@ export function useLatestCharacters() {
   }, []);
 
   return { characters, loading, error };
-} 
+}
