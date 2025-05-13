@@ -21,6 +21,8 @@ interface Question {
   }[];
 }
 
+const POINTS_PER_OPTION_VALUE = 10; // Each option value (1-4) gives 10-40 points
+
 const PersonalityTest: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -176,7 +178,7 @@ const PersonalityTest: React.FC = () => {
     setShowFeedback(answer.feedback);
     
     // Show toast
-    toast.success(`Has ganado +${answer.value * 25}% de ${translateEffect(answer.effect)}!`, {
+    toast.success(`Has ganado +${answer.value * POINTS_PER_OPTION_VALUE} puntos de ${translateEffect(answer.effect)}!`, {
       icon: answer.emoji,
     });
     

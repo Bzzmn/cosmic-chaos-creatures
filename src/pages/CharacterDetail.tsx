@@ -1,21 +1,26 @@
+
 import React, { useEffect, useState } from 'react';
 import { useParams, useLocation, useNavigate } from 'react-router-dom';
-import { LatestCharacter } from '@/hooks/useLatestCharacters';
-import CharacterCard from '@/components/CharacterCard';
+import CharacterCard, { CharacterType, Artifact } from '@/components/CharacterCard';
 import CosmicButton from '@/components/CosmicButton';
 import StarryBackground from '@/components/StarryBackground';
 import CosmicParticles from '@/components/CosmicParticles';
 import NeonTitle from '@/components/NeonTitle';
-import { ArrowLeft, User, Copy, Check } from 'lucide-react';
+import { ArrowLeft, User, Copy, Check, Star } from 'lucide-react';
 import { toast } from 'sonner';
 
+// Extended interface to include character address
+interface CharacterWithAddress extends CharacterType {
+  address: string;
+}
+
 // Mock function to get character by address (in a real app, this would be an API call)
-const getCharacterByAddress = async (address: string): Promise<LatestCharacter | null> => {
+const getCharacterByAddress = async (address: string): Promise<CharacterWithAddress | null> => {
   // Simulate API call delay
   await new Promise(resolve => setTimeout(resolve, 1000));
   
   // For demo purposes, we're returning mock data
-  const mockCharacters: LatestCharacter[] = [
+  const mockCharacters: CharacterWithAddress[] = [
     {
       name: "Zortblob",
       class: "Camarero Cuántico",
@@ -27,7 +32,23 @@ const getCharacterByAddress = async (address: string): Promise<LatestCharacter |
         sarcasmLevel: 92,
         timeWarping: 60,
         cosmicLuck: 78
-      }
+      },
+      artifacts: [
+        {
+          id: "art-1",
+          name: "Calculadora Paradójica",
+          description: "Suma restando y multiplica dividiendo, pero de algún modo siempre obtiene el resultado correcto.",
+          effect: {
+            stat: "absurdityResistance",
+            bonus: 20,
+            duration: 3,
+          },
+          isActive: false
+        },
+        null,
+        null,
+        null
+      ]
     },
     {
       name: "Blipzoid",
@@ -40,7 +61,23 @@ const getCharacterByAddress = async (address: string): Promise<LatestCharacter |
         sarcasmLevel: 72,
         timeWarping: 83,
         cosmicLuck: 60
-      }
+      },
+      artifacts: [
+        null,
+        {
+          id: "art-2",
+          name: "Taza de Café Infinito",
+          description: "Una taza que nunca se vacía, aunque cada sorbo sabe a una bebida diferente.",
+          effect: {
+            stat: "quantumCharisma",
+            bonus: 15,
+            duration: 2,
+          },
+          isActive: true
+        },
+        null,
+        null
+      ]
     },
     {
       name: "Quirkton",
@@ -53,7 +90,23 @@ const getCharacterByAddress = async (address: string): Promise<LatestCharacter |
         sarcasmLevel: 68,
         timeWarping: 90,
         cosmicLuck: 84
-      }
+      },
+      artifacts: [
+        null,
+        null,
+        {
+          id: "art-4",
+          name: "Reloj de Bolsillo Caprichoso",
+          description: "A veces adelanta, a veces atrasa, pero siempre te lleva a tiempo a donde necesitas estar.",
+          effect: {
+            stat: "timeWarping",
+            bonus: 20,
+            duration: 2,
+          },
+          isActive: false
+        },
+        null
+      ]
     }
   ];
   
@@ -64,8 +117,8 @@ const CharacterDetail: React.FC = () => {
   const { address } = useParams<{ address: string }>();
   const location = useLocation();
   const navigate = useNavigate();
-  const [character, setCharacter] = useState<LatestCharacter | null>(
-    (location.state?.character as LatestCharacter) || null
+  const [character, setCharacter] = useState<CharacterWithAddress | null>(
+    (location.state?.character as CharacterWithAddress) || null
   );
   const [loading, setLoading] = useState(!character);
   const [copied, setCopied] = useState(false);
@@ -109,6 +162,41 @@ const CharacterDetail: React.FC = () => {
         toast.error('Error al copiar la dirección');
       });
   };
+
+  const handleActivateArtifact = (artifactIndex: number) => {
+    if (!character || !character.artifacts[artifactIndex]) return;
+    
+    // Clone character and artifacts to avoid direct state mutation
+    const updatedCharacter = {...character} as CharacterWithAddress;
+    updatedCharacter.artifacts = [...updatedCharacter.artifacts];
+    
+    const artifact = updatedCharacter.artifacts[artifactIndex];
+    
+    // Toggle artifact activation
+    if (artifact) {
+      const updatedArtifact = {...artifact};
+      updatedArtifact.isActive = !updatedArtifact.isActive;
+      
+      if (updatedArtifact.isActive) {
+        toast.success(`¡Artefacto activado!`, {
+          description: `${artifact.name} - ${artifact.effect.stat} +${artifact.effect.bonus} puntos`,
+          icon: <Star className="h-5 w-5" />,
+        });
+      } else {
+        toast.info(`Artefacto desactivado`, {
+          description: artifact.name,
+          icon: <Star className="h-5 w-5" />,
+        });
+      }
+      
+      updatedCharacter.artifacts[artifactIndex] = updatedArtifact;
+      setCharacter(updatedCharacter);
+    }
+  };
+  
+  const getStatLevel = (points: number) => {
+    return Math.floor(points / 10); // Every 10 points is 1 level
+  };
   
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-20">
@@ -139,7 +227,10 @@ const CharacterDetail: React.FC = () => {
           <div className="animate-[fade-in_0.5s_ease_forwards]">
             <div className="flex flex-col lg:flex-row gap-8">
               <div className="lg:w-1/2">
-                <CharacterCard character={character} />
+                <CharacterCard 
+                  character={character} 
+                  onActivateArtifact={handleActivateArtifact} 
+                />
                 
                 <div className="mt-5 bg-cosmic-dark p-4 rounded-lg border border-cosmic-cyan/20">
                   <div className="flex items-center justify-between">
@@ -174,22 +265,61 @@ const CharacterDetail: React.FC = () => {
                 
                 <p className="text-white/80 mb-4">
                   {character.name} es un {character.class.toLowerCase()} que deambula por los confines 
-                  más extraños del universo conocido. Con una {character.stats.quantumCharisma}% de carisma cuántico, 
+                  más extraños del universo conocido. Con un nivel {getStatLevel(character.stats.quantumCharisma)} de carisma cuántico, 
                   ha logrado salir de situaciones imposibles simplemente hablando en ecuaciones 
                   incomprensibles a sus captores.
                 </p>
                 
                 <p className="text-white/80 mb-4">
-                  Su resistencia al absurdo de {character.stats.absurdityResistance}% le permite mantener la 
+                  Su resistencia al absurdo de nivel {getStatLevel(character.stats.absurdityResistance)} le permite mantener la 
                   cordura en las situaciones más ridículas, como aquella vez que tuvo que explicar 
                   a un robot la diferencia entre un pato y una plancha.
                 </p>
                 
                 <p className="text-white/80">
-                  Con un nivel de sarcasmo de {character.stats.sarcasmLevel}%, su especialidad es hacer 
+                  Con un nivel de sarcasmo {getStatLevel(character.stats.sarcasmLevel)}, su especialidad es hacer 
                   comentarios mordaces sobre la inutilidad de los planes de conquista galáctica 
                   mientras disfruta de un martini de antimateria en el Bar del Fin del Universo.
                 </p>
+                
+                <div className="mt-8">
+                  <h4 className="text-lg font-space font-medium text-cosmic-cyan mb-3">
+                    Artefactos Absurdos
+                  </h4>
+                  
+                  <div className="space-y-3">
+                    {character.artifacts.some(art => art !== null) ? (
+                      character.artifacts.map((artifact, index) => 
+                        artifact ? (
+                          <div key={index} className="p-3 bg-cosmic-dark/50 rounded border border-cosmic-cyan/10">
+                            <div className="flex justify-between">
+                              <p className="text-sm text-cosmic-cyan">{artifact.name}</p>
+                              <span 
+                                className={artifact.isActive 
+                                  ? "text-xs bg-cosmic-green/20 text-cosmic-green px-1.5 py-0.5 rounded" 
+                                  : "text-xs bg-gray-700/30 text-gray-300 px-1.5 py-0.5 rounded"
+                                }
+                              >
+                                {artifact.isActive ? 'Activo' : 'Inactivo'}
+                              </span>
+                            </div>
+                            <p className="text-xs text-white/60 mt-1">
+                              {artifact.description}
+                            </p>
+                            <p className="text-xs text-cosmic-green mt-1">
+                              Efecto: +{artifact.effect.bonus} puntos de {translateStat(artifact.effect.stat)} 
+                              por {artifact.effect.duration} aventuras
+                            </p>
+                          </div>
+                        ) : null
+                      )
+                    ) : (
+                      <p className="text-sm text-white/50">
+                        Este personaje aún no ha descubierto ningún artefacto en sus aventuras.
+                      </p>
+                    )}
+                  </div>
+                </div>
                 
                 <div className="mt-8">
                   <h4 className="text-lg font-space font-medium text-cosmic-cyan mb-3">
@@ -237,4 +367,16 @@ const CharacterDetail: React.FC = () => {
   );
 };
 
-export default CharacterDetail; 
+// Helper function to translate stat names to Spanish
+const translateStat = (stat: string): string => {
+  switch(stat) {
+    case 'quantumCharisma': return 'Carisma Cuántico';
+    case 'absurdityResistance': return 'Resistencia al Absurdo';
+    case 'sarcasmLevel': return 'Nivel de Sarcasmo';
+    case 'timeWarping': return 'Distorsión Temporal';
+    case 'cosmicLuck': return 'Suerte Cósmica';
+    default: return stat;
+  }
+};
+
+export default CharacterDetail;

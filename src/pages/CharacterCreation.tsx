@@ -6,8 +6,8 @@ import StarryBackground from '@/components/StarryBackground';
 import CosmicParticles from '@/components/CosmicParticles';
 import CosmicButton from '@/components/CosmicButton';
 import NeonTitle from '@/components/NeonTitle';
-import CharacterCard, { CharacterType, CharacterStats } from '@/components/CharacterCard';
-import { ArrowLeft, ArrowRight, Sparkles } from 'lucide-react';
+import CharacterCard, { CharacterType, CharacterStats, Artifact } from '@/components/CharacterCard';
+import { ArrowLeft, ArrowRight, Star } from 'lucide-react';
 
 // Array of absurd character classes
 const characterClasses = [
@@ -44,6 +44,8 @@ const characterImageUrls = [
   "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5",
 ];
 
+const POINTS_PER_OPTION_VALUE = 10; // Each option value (1-4) gives 10-40 points
+
 const CharacterCreation: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -68,11 +70,11 @@ const CharacterCreation: React.FC = () => {
       
       // Generate stats based on answers
       const stats: CharacterStats = {
-        quantumCharisma: 20,
-        absurdityResistance: 20,
-        sarcasmLevel: 20,
-        timeWarping: 20,
-        cosmicLuck: 20,
+        quantumCharisma: 0,
+        absurdityResistance: 0,
+        sarcasmLevel: 0,
+        timeWarping: 0,
+        cosmicLuck: 0,
       };
       
       // Process answers to modify stats
@@ -80,15 +82,10 @@ const CharacterCreation: React.FC = () => {
         if (questions[questionIndex] && questions[questionIndex].options[answerIndex]) {
           const option = questions[questionIndex].options[answerIndex];
           const effectName = option.effect;
-          const effectValue = option.value * 20; // Convert to percentage (1-4 becomes 20-80%)
+          const effectValue = option.value * POINTS_PER_OPTION_VALUE; // Convert to points (1-4 becomes 10-40 points)
           
           if (stats[effectName as keyof CharacterStats] !== undefined) {
             stats[effectName as keyof CharacterStats] += effectValue;
-            
-            // Cap at 100
-            if (stats[effectName as keyof CharacterStats] > 100) {
-              stats[effectName as keyof CharacterStats] = 100;
-            }
           }
         }
       });
@@ -104,19 +101,21 @@ const CharacterCreation: React.FC = () => {
       // Get random image from array
       const imageUrl = characterImageUrls[Math.floor(Math.random() * characterImageUrls.length)];
       
-      // Create character
+      // Create character with empty artifact slots
       const newCharacter: CharacterType = {
         name,
         class: characterClass,
         imageUrl,
         stats,
+        artifacts: [null, null, null, null],
+        experience: 0,
       };
       
       setCharacter(newCharacter);
       setIsGenerating(false);
       
       toast.success("¡Personaje cósmico generado con éxito!", {
-        icon: <Sparkles className="h-5 w-5" />,
+        icon: <Star className="h-5 w-5" />,
       });
     };
     
@@ -151,7 +150,7 @@ const CharacterCreation: React.FC = () => {
             <div className="text-center p-10">
               <div className="relative w-20 h-20 mx-auto mb-4">
                 <div className="absolute inset-0 rounded-full border-4 border-t-cosmic-magenta border-r-cosmic-cyan border-b-cosmic-green border-l-transparent animate-cosmic-spin"></div>
-                <Sparkles className="absolute inset-0 m-auto h-8 w-8 text-white animate-pulse-glow" />
+                <Star className="absolute inset-0 m-auto h-8 w-8 text-white animate-pulse-glow" />
               </div>
               <p className="text-lg text-white/80">Generando tu identidad cósmica...</p>
             </div>
