@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -9,6 +8,7 @@ import NeonTitle from '@/components/NeonTitle';
 import GalaxyCard from '@/components/GalaxyCard';
 import TypewriterText from '@/components/TypewriterText';
 import CharacterCard from '@/components/CharacterCard';
+import CharactersProgressCard from '@/components/CharactersProgressCard';
 import { Rocket, Sparkles, Coffee, BookOpen, Dices, Award } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
@@ -136,6 +136,11 @@ const Landing: React.FC = () => {
               Explorar la galaxia
             </button>
           </div>
+        </div>
+        
+        {/* Character Progress Card - NEW SECTION */}
+        <div className="mt-8 animate-fade-in">
+          <CharactersProgressCard />
         </div>
         
         {/* Testimonials Section */}
