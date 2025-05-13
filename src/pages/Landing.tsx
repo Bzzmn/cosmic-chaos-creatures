@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import StarryBackground from '@/components/StarryBackground';
 import CosmicParticles from '@/components/CosmicParticles';
@@ -10,9 +10,10 @@ import TypewriterText from '@/components/TypewriterText';
 import CharacterCard from '@/components/CharacterCard';
 import CharactersProgressCard from '@/components/CharactersProgressCard';
 import LatestCharacterSlider from '@/components/LatestCharacterSlider';
-import { Rocket, Sparkles, Coffee, BookOpen, Dices, Award } from 'lucide-react';
+import { Sparkles, Coffee, BookOpen, Dices, Award } from 'lucide-react';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { AspectRatio } from '@/components/ui/aspect-ratio';
+import { useAuth } from '@/hooks/useAuth';
 
 const AdventureQuotes = [
   "¡Enfréntate a un camarero de cinco cabezas en el Bar Milliways!",
@@ -27,6 +28,8 @@ const Landing: React.FC = () => {
   const [quoteIndex, setQuoteIndex] = useState(0);
   const [typingComplete, setTypingComplete] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const { isAuthenticated } = useAuth();
+  const navigate = useNavigate();
   
   // Sample character for preview
   const sampleCharacter = {
@@ -72,6 +75,16 @@ const Landing: React.FC = () => {
     setShowPreview(true);
   };
   
+  const handleStartAdventure = () => {
+    if (isAuthenticated) {
+      // If user is authenticated, go directly to personality test
+      navigate('/personality');
+    } else {
+      // If not authenticated, go to auth page
+      navigate('/auth');
+    }
+  };
+  
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center px-4 py-20">
       <StarryBackground />
@@ -81,7 +94,6 @@ const Landing: React.FC = () => {
       <div className="max-w-5xl w-full mx-auto text-center z-10 space-y-12">
         <div className="space-y-6 animate-float">
           <div className="inline-block mb-2">
-            <Rocket className="inline-block h-12 w-12 text-cosmic-magenta mr-2" />
             <Sparkles className="inline-block h-8 w-8 text-cosmic-cyan" />
           </div>
           
@@ -114,11 +126,14 @@ const Landing: React.FC = () => {
         </div>
         
         <div className="flex flex-col items-center space-y-6">
-          <Link to="/personality">
-            <CosmicButton variant="primary" size="lg" className="animate-pulse-glow">
-              <span className="text-xl">¡Comienza Tu Aventura!</span>
-            </CosmicButton>
-          </Link>
+          <CosmicButton 
+            variant="primary" 
+            size="lg" 
+            className="animate-pulse-glow"
+            onClick={handleStartAdventure}
+          >
+            <span className="text-xl">¡Comienza Tu Aventura!</span>
+          </CosmicButton>
           
           <div className="flex gap-4 items-center">
             <button 
